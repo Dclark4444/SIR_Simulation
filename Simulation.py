@@ -104,7 +104,7 @@ def census(population):
         r+=status==RECOVERED
     return s,i,r
 
-def simulation(n=100,infectionRadius=10,infectionRate=.1, m=0, averagePeriod = 240, show=True):
+def simulation(n=100,infectionRadius=5,infectionRate=.05, m=0, averagePeriod = 240, show=True):
     population=getPopulation(n, m)
     infectPopulation(population)
     S=[]
@@ -120,7 +120,7 @@ def simulation(n=100,infectionRadius=10,infectionRate=.1, m=0, averagePeriod = 2
             display(population)
     return S,I,R
 
-#Defines the makeGraph function that intakes data as a tuple and an instance to produce a graph based off that data
+#Defines the makeGraph method that intakes data as a tuple and an instance to produce a graph based off that data
 def makeGraph(data, instance, title):
     x=range(len(data[0]))
     TEMP = plt.figure(instance)
@@ -131,15 +131,15 @@ def makeGraph(data, instance, title):
     plt.title(title)
     plt.show(block=False)
 
-#Defines the infectRadiusExperiment function that runs multiple simulations with an increasing infection radius and returns the averaged data collected as a tuple
-def infectRadiusExperiment(Lmin, Lmax):
+#Defines the infectRadiusExperiment method that runs multiple simulations with an increasing infection radius and returns the averaged data collected as a tuple
+def infectRadiusExperiment(lMin, lMax):
     #Sets up the variables to collect the averaged data later on
     infectRadiusX = []
     infectRadiusY = []
     infectRadiusZ = []
  
-    for x in range(Lmin, Lmax, 1):
-        print("Loading progress: " + str(x) + " out of " + str(Lmax-1) + ".")
+    for x in range(lMin, lMax, 1):
+        print("Loading progress: " + str(x) + " out of " + str(lMax-1) + ".")
         data = simulation(show=False, infectionRadius=x)
         temp1 = data[0]
         temp1 = sum(temp1)/len(temp1)
@@ -152,17 +152,19 @@ def infectRadiusExperiment(Lmin, Lmax):
         infectRadiusZ.append(temp3)
 
     return (infectRadiusX, infectRadiusY, infectRadiusZ)
-
-#Defiens the function that just runs the experiments created above
+        
+#Defines the method that just runs the experiments created above
 def experiments():
 
     #Collects a control simulation and collects the data. Then finally makes a graph of it
-    controlData=simulation(show=True)
+    controlData=simulation(show=False)
     makeGraph(controlData, 1, "Control Experiment")
+    infectRadiusData=infectRadiusExperiment(1, 16)
+    makeGraph(infectRadiusData, 2, "Infection Radius Experiment")
 
 experiments()
 
-#Begins the main loop for turtles so that they can function correctly 
+#Begins the main loop for turtles so that they can method correctly 
 turtle.mainloop()
 
 
