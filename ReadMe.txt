@@ -1,0 +1,1 @@
+This program uses the SIR model with a local turtle library. It has the ability to change inputs such the infection radius, use of masks, infection chance, average recovery time, etc. The program has no user interface at this point so to run a new simulation with different values it would have to be put in a console or the source code would have to be edited.
