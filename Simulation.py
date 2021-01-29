@@ -152,6 +152,28 @@ def infectRadiusExperiment(lMin, lMax):
         infectRadiusZ.append(temp3)
 
     return (infectRadiusX, infectRadiusY, infectRadiusZ)
+
+#Defines the maskExperiment method that runs multiple simulations with an increasing number of masks being used each simulation and returns the averaged data collected as a tuple
+def maskExperiment(mMin, mMax):
+    #Sets up the variables to collect the averaged data later on
+    infectRadiusX = []
+    infectRadiusY = []
+    infectRadiusZ = []
+ 
+    for x in range(mMin, mMax, 2):
+        print("Loading progress: " + str(x) + " out of " + str(mMax-1) + ".")
+        data = simulation(show=False, m=x)
+        temp1 = data[0]
+        temp1 = sum(temp1)/len(temp1)
+        temp2 = data[1]
+        temp2 = sum(temp2)/len(temp2)
+        temp3 = data[2]
+        temp3 = sum(temp3)/len(temp3)
+        infectRadiusX.append(temp1)
+        infectRadiusY.append(temp2)
+        infectRadiusZ.append(temp3)
+
+    return (infectRadiusX, infectRadiusY, infectRadiusZ)
         
 #Defines the method that just runs the experiments created above
 def experiments():
@@ -159,8 +181,10 @@ def experiments():
     #Collects a control simulation and collects the data. Then finally makes a graph of it
     controlData=simulation(show=False)
     makeGraph(controlData, 1, "Control Experiment")
-    infectRadiusData=infectRadiusExperiment(1, 16)
+    infectRadiusData=infectRadiusExperiment(1, 26)
     makeGraph(infectRadiusData, 2, "Infection Radius Experiment")
+    maskData = maskExperiment(0, 101)
+    makeGraph(maskData, 3, "Mask Experiment")
 
 experiments()
 
