@@ -90,7 +90,7 @@ def expose(person,population,infectionRadius,infectionRate):
         if other[2]==INFECTED:
             i,j,*_=other
             d=math.hypot(x-i,y-j)
-            if d<infectionRadius and d < random.randint(0, infectionRadius):
+            if d<infectionRadius and d < random.randint(0, infectionRate):
                 person[2]=INFECTED
                 break
 
@@ -105,7 +105,7 @@ def census(population):
         r+=status==RECOVERED
     return s,i,r
 
-def simulation(n=100,infectionRadius=5,infectionRate=.05, m=0, averagePeriod = 240, show=True):
+def simulation(n=100,infectionRadius=5,infectionRate=0.01, m=0, averagePeriod = 240, show=True):
     population=getPopulation(n, m)
     infectPopulation(population)
     S=[]
@@ -185,9 +185,9 @@ def experiments():
     infectRadiusData= []
     maskData = []
     for x in range(0, testNumber):
-        controlData.append(simulation(show=False))
+        controlData.append(simulation(show=True))
         infectRadiusData.append(infectRadiusExperiment(1, 26))
-        maskData.append(maskExperiment(0, 101))
+        maskData.append(maskExperiment(0, 10))
     print(controlData)
         
     makeGraph(controlData, 1, "Control Experiment")
