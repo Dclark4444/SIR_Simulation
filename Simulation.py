@@ -13,7 +13,8 @@ turtle.update()
 SUSCEPTIBLE=(0,0,1)
 INFECTED=(1,0,0)
 RECOVERED=(.5,.5,.5)
-MOVE_DISTANCE=1
+MOVE_DISTANCE = 1
+testNumber = 1
 
 #Mask Protection
 maskSpreadChance = 0.5
@@ -174,16 +175,23 @@ def maskExperiment(mMin, mMax):
         infectRadiusZ.append(temp3)
 
     return (infectRadiusX, infectRadiusY, infectRadiusZ)
+
         
 #Defines the method that just runs the experiments created above
 def experiments():
 
     #Collects a control simulation and collects the data. Then finally makes a graph of it
-    controlData=simulation(show=False)
+    controlData = []
+    infectRadiusData= []
+    maskData = []
+    for x in range(0, testNumber):
+        controlData.append(simulation(show=False))
+        infectRadiusData.append(infectRadiusExperiment(1, 26))
+        maskData.append(maskExperiment(0, 101))
+    print(controlData)
+        
     makeGraph(controlData, 1, "Control Experiment")
-    infectRadiusData=infectRadiusExperiment(1, 26)
     makeGraph(infectRadiusData, 2, "Infection Radius Experiment")
-    maskData = maskExperiment(0, 101)
     makeGraph(maskData, 3, "Mask Experiment")
 
 experiments()
