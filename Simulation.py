@@ -17,8 +17,8 @@ MOVE_DISTANCE = 1
 testNumber = 1
 
 #Mask Protection
-maskSpreadChance = 0.5
-maskProtectChance = 0.5
+maskSpreadChance = 0.99
+maskProtectChance = 0.99
 
 def getPopulation(n, m):
     masksLeft = m
@@ -90,7 +90,15 @@ def expose(person,population,infectionRadius,infectionRate):
         if other[2]==INFECTED:
             i,j,*_=other
             d=math.hypot(x-i,y-j)
-            if d<infectionRadius and d < random.randint(0, infectionRate):
+            if maskStatus == True:
+                maskTemp1 = maskSpreadChance
+            else:
+                maskTemp1 = 1
+            if other[4] == True:
+                maskTemp2 = maskProtectChance
+            else:
+                maskTemp2 = 1
+            if d<infectionRadius and d < random.randint(0, infectionRate*maskTemp1*maskTemp2):
                 person[2]=INFECTED
                 break
 
@@ -105,7 +113,7 @@ def census(population):
         r+=status==RECOVERED
     return s,i,r
 
-def simulation(n=100,infectionRadius=5,infectionRate=0.01, m=0, averagePeriod = 240, show=True):
+def simulation(n=100,infectionRadius=10,infectionRate=10, m=0, averagePeriod = 240, show=True):
     population=getPopulation(n, m)
     infectPopulation(population)
     S=[]
