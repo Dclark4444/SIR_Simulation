@@ -17,8 +17,8 @@ MOVE_DISTANCE = 1
 testNumber = 1
 
 #Mask Protection
-maskSpreadChance = 0.99
-maskProtectChance = 0.99
+maskSpreadChance = 0.5
+maskProtectChance = 0.8
 
 def getPopulation(n, m):
     masksLeft = m
@@ -150,6 +150,50 @@ def infectRadiusExperiment(lMin, lMax):
     for x in range(lMin, lMax, 1):
         print("Loading progress: " + str(x) + " out of " + str(lMax-1) + ".")
         data = simulation(show=False, infectionRadius=x)
+        temp1 = data[0]
+        temp1 = sum(temp1)/len(temp1)
+        temp2 = data[1]
+        temp2 = sum(temp2)/len(temp2)
+        temp3 = data[2]
+        temp3 = sum(temp3)/len(temp3)
+        infectRadiusX.append(temp1)
+        infectRadiusY.append(temp2)
+        infectRadiusZ.append(temp3)
+
+    return (infectRadiusX, infectRadiusY, infectRadiusZ)
+
+#Defines the infectChanceExperiment method that runs multiple simulations with an increasing infection chance and returns the averaged data collected as a tuple
+def infectChanceExperiment(lMin, lMax):
+    #Sets up the variables to collect the averaged data later on
+    infectRadiusX = []
+    infectRadiusY = []
+    infectRadiusZ = []
+ 
+    for x in range(lMin, lMax, 1):
+        print("Loading progress: " + str(x) + " out of " + str(lMax-1) + ".")
+        data = simulation(show=False, infectionChance=x)
+        temp1 = data[0]
+        temp1 = sum(temp1)/len(temp1)
+        temp2 = data[1]
+        temp2 = sum(temp2)/len(temp2)
+        temp3 = data[2]
+        temp3 = sum(temp3)/len(temp3)
+        infectRadiusX.append(temp1)
+        infectRadiusY.append(temp2)
+        infectRadiusZ.append(temp3)
+
+    return (infectRadiusX, infectRadiusY, infectRadiusZ)
+
+#Defines the infectChanceExperiment method that runs multiple simulations with an increasing infection chance and returns the averaged data collected as a tuple
+def infectPeriodExperiment(lMin, lMax):
+    #Sets up the variables to collect the averaged data later on
+    infectRadiusX = []
+    infectRadiusY = []
+    infectRadiusZ = []
+ 
+    for x in range(lMin, lMax, 1):
+        print("Loading progress: " + str(x) + " out of " + str(lMax-1) + ".")
+        data = simulation(show=False, averagePeriod=x)
         temp1 = data[0]
         temp1 = sum(temp1)/len(temp1)
         temp2 = data[1]
