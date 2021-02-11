@@ -1,6 +1,7 @@
 import random
 import turtle
 import math
+import numpy as np
 import time
 import matplotlib.pyplot as plt
 
@@ -14,7 +15,7 @@ SUSCEPTIBLE=(0,0,1)
 INFECTED=(1,0,0)
 RECOVERED=(.5,.5,.5)
 MOVE_DISTANCE = 1
-testNumber = 1
+testNumber = 2
 
 #Mask Protection
 maskSpreadChance = 0.5
@@ -113,7 +114,7 @@ def census(population):
         r+=status==RECOVERED
     return s,i,r
 
-def simulation(n=100,infectionRadius=10,infectionRate=10, m=0, averagePeriod = 240, show=True):
+def simulation(n=100,infectionRadius=10,infectionRate=10, m=0, averagePeriod = 240, show=False):
     population=getPopulation(n, m)
     infectPopulation(population)
     S=[]
@@ -149,7 +150,7 @@ def infectRadiusExperiment(lMin, lMax):
  
     for x in range(lMin, lMax, 1):
         print("Loading progress: " + str(x) + " out of " + str(lMax-1) + ".")
-        data = simulation(show=False, infectionRadius=x)
+        data = simulation(infectionRadius=x)
         temp1 = data[0]
         temp1 = sum(temp1)/len(temp1)
         temp2 = data[1]
@@ -171,7 +172,7 @@ def infectChanceExperiment(lMin, lMax):
  
     for x in range(lMin, lMax, 1):
         print("Loading progress: " + str(x) + " out of " + str(lMax-1) + ".")
-        data = simulation(show=False, infectionChance=x)
+        data = simulation(infectionChance=x)
         temp1 = data[0]
         temp1 = sum(temp1)/len(temp1)
         temp2 = data[1]
@@ -193,7 +194,7 @@ def infectPeriodExperiment(lMin, lMax):
  
     for x in range(lMin, lMax, 1):
         print("Loading progress: " + str(x) + " out of " + str(lMax-1) + ".")
-        data = simulation(show=False, averagePeriod=x)
+        data = simulation(averagePeriod=x)
         temp1 = data[0]
         temp1 = sum(temp1)/len(temp1)
         temp2 = data[1]
@@ -215,7 +216,7 @@ def maskExperiment(mMin, mMax):
  
     for x in range(mMin, mMax, 2):
         print("Loading progress: " + str(x) + " out of " + str(mMax-1) + ".")
-        data = simulation(show=False, m=x)
+        data = simulation(m=x)
         temp1 = data[0]
         temp1 = sum(temp1)/len(temp1)
         temp2 = data[1]
@@ -236,15 +237,47 @@ def experiments():
     controlData = []
     infectRadiusData= []
     maskData = []
+
+    allS = []
+    allI = []
+    allR = []
+    
     for x in range(0, testNumber):
-        controlData.append(simulation(show=True))
-        infectRadiusData.append(infectRadiusExperiment(1, 26))
-        maskData.append(maskExperiment(0, 10))
-    print(controlData)
-        
-    makeGraph(controlData, 1, "Control Experiment")
-    makeGraph(infectRadiusData, 2, "Infection Radius Experiment")
-    makeGraph(maskData, 3, "Mask Experiment")
+        controlData.append(simulation())
+
+    for w in controlData:
+        allS.append(w[0])
+        allI.append(w[1])
+        allR.append(w[2])
+
+    allAveragedData = []
+    allTypes = [allS, allI, allR]
+    for w in allTypes:
+        for x in w:
+            longestList = []
+            paddedData = []
+            average = []
+            averagedData = []
+            
+            for y in x:
+                if len(x) > len(longestList):
+                    longestList = x        
+            for y in x:
+                if x == longestList:
+                    paddedData.append(longestList)
+                else:
+                    paddedData.append(np.pad(x(0, len(longestList)-len(x)), mode="edge")).tolist()
+            for y in range(0, len(paddedData)):
+                for z in range(0, y):
+                    average.append(x[y][z])
+                averagedData.append(sum(average)/len(average))
+            allAveragedData.append(averagedData)
+        print(averagedData)
+
+    
+    #makeGraph(controlData, 1, "Control Experiment")
+    #makeGraph(infectRadiusData, 2, "Infection Radius Experiment")
+    #makeGraph(maskData, 3, "Mask Experiment")
 
 experiments()
 
