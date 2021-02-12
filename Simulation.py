@@ -15,7 +15,7 @@ SUSCEPTIBLE=(0,0,1)
 INFECTED=(1,0,0)
 RECOVERED=(.5,.5,.5)
 MOVE_DISTANCE = 1
-testNumber = 2
+testNumber = 100
 
 #Mask Protection
 maskSpreadChance = 0.5
@@ -130,16 +130,54 @@ def simulation(n=100,infectionRadius=10,infectionRate=10, m=0, averagePeriod = 2
             display(population)
     return S,I,R
 
-#Defines the makeGraph method that intakes data as a tuple and an instance to produce a graph based off that data
-def makeGraph(data, instance, title):
-    x=range(len(data[0]))
-    TEMP = plt.figure(instance)
-    plt.stackplot(x,data, labels=['Susceptible','Infected','Recovered'],colors=[SUSCEPTIBLE,INFECTED,RECOVERED])
-    plt.legend(loc='upper left')
-    plt.xlabel('step count')
-    plt.ylabel('population')
-    plt.title(title)
-    plt.show(block=False)
+def averageData(dataSet):
+    
+    allS = []
+    allI = []
+    allR = []
+
+    returnableData = []
+    
+    for w in dataSet:
+        allS.append(w[0])
+        allI.append(w[1])
+        allR.append(w[2])
+
+    allTypes = [allS, allI, allR]
+
+    averagedData = []
+    finalData = []
+
+    for w in allTypes:
+        longestList = []
+        paddedData = []
+
+        #Padding
+        for x in w:
+            if len(x) > len(longestList):
+                longestList = x        
+        for x in w:
+            if x == longestList:
+                paddedData.append(longestList)
+            else:
+                paddedData.append(np.pad(x, (0, len(longestList)-len(x)), mode="edge").tolist())
+
+        averagedData = []
+
+        #Average
+        for x in range(0, len(paddedData[0])):
+            average = 0
+            for y in paddedData:
+                average += y[x]
+            averagedData.append(average/len(paddedData))
+        finalData.append(averagedData)
+    returnableData.append(finalData)
+
+    return returnableData
+
+def saveData(data, title):
+    with open(title, "w") as file:
+        file.write(str(data))
 
 #Defines the infectRadiusExperiment method that runs multiple simulations with an increasing infection radius and returns the averaged data collected as a tuple
 def infectRadiusExperiment(lMin, lMax):
@@ -149,7 +187,7 @@ def infectRadiusExperiment(lMin, lMax):
     infectRadiusZ = []
  
     for x in range(lMin, lMax, 1):
-        print("Loading progress: " + str(x) + " out of " + str(lMax-1) + ".")
+        print("Loading progress: " + str(x-lMin) + " out of " + str(lMax-1-lMin) + ".")
         data = simulation(infectionRadius=x)
         temp1 = data[0]
         temp1 = sum(temp1)/len(temp1)
@@ -171,8 +209,8 @@ def infectChanceExperiment(lMin, lMax):
     infectRadiusZ = []
  
     for x in range(lMin, lMax, 1):
-        print("Loading progress: " + str(x) + " out of " + str(lMax-1) + ".")
-        data = simulation(infectionChance=x)
+        print("Loading progress: " + str(x-lMin) + " out of " + str(lMax-1-lMin) + ".")
+        data = simulation(infectionRate=x)
         temp1 = data[0]
         temp1 = sum(temp1)/len(temp1)
         temp2 = data[1]
@@ -186,14 +224,14 @@ def infectChanceExperiment(lMin, lMax):
     return (infectRadiusX, infectRadiusY, infectRadiusZ)
 
 #Defines the infectChanceExperiment method that runs multiple simulations with an increasing infection chance and returns the averaged data collected as a tuple
-def infectPeriodExperiment(lMin, lMax):
+def infectPeriodExperiment(lMin, lMax, stepC):
     #Sets up the variables to collect the averaged data later on
     infectRadiusX = []
     infectRadiusY = []
     infectRadiusZ = []
  
-    for x in range(lMin, lMax, 1):
-        print("Loading progress: " + str(x) + " out of " + str(lMax-1) + ".")
+    for x in range(lMin, lMax, stepC):
+        print("Loading progress: " + str(x-lMin) + " out of " + str(lMax-1-lMin) + ".")
         data = simulation(averagePeriod=x)
         temp1 = data[0]
         temp1 = sum(temp1)/len(temp1)
@@ -208,13 +246,13 @@ def infectPeriodExperiment(lMin, lMax):
     return (infectRadiusX, infectRadiusY, infectRadiusZ)
 
 #Defines the maskExperiment method that runs multiple simulations with an increasing number of masks being used each simulation and returns the averaged data collected as a tuple
-def maskExperiment(mMin, mMax):
+def maskExperiment(mMin, mMax, stepC):
     #Sets up the variables to collect the averaged data later on
     infectRadiusX = []
     infectRadiusY = []
     infectRadiusZ = []
  
-    for x in range(mMin, mMax, 2):
+    for x in range(mMin, mMax, stepC):
         print("Loading progress: " + str(x) + " out of " + str(mMax-1) + ".")
         data = simulation(m=x)
         temp1 = data[0]
@@ -236,48 +274,28 @@ def experiments():
     #Collects a control simulation and collects the data. Then finally makes a graph of it
     controlData = []
     infectRadiusData= []
+    infectChanceData = []
+    infectPeriodData = []
     maskData = []
 
-    allS = []
-    allI = []
-    allR = []
-    
     for x in range(0, testNumber):
         controlData.append(simulation())
+        infectRadiusData.append(infectRadiusExperiment(5, 31))
+        infectChanceData.append(infectChanceExperiment(5, 31))
+        infectPeriodData.append(infectPeriodExperiment(120, 361, 10))
+        maskData.append(maskExperiment(0, 101, 2))
 
-    for w in controlData:
-        allS.append(w[0])
-        allI.append(w[1])
-        allR.append(w[2])
+    controlData = averageData(controlData)
+    infectRadiusData= averageData(infectRadiusData)
+    infectChanceData = averageData(infectChanceData)
+    infectPeriodData = averageData(infectPeriodData)
+    maskData = averageData(maskData)
 
-    allAveragedData = []
-    allTypes = [allS, allI, allR]
-    for w in allTypes:
-        for x in w:
-            longestList = []
-            paddedData = []
-            average = []
-            averagedData = []
-            
-            for y in x:
-                if len(x) > len(longestList):
-                    longestList = x        
-            for y in x:
-                if x == longestList:
-                    paddedData.append(longestList)
-                else:
-                    paddedData.append(np.pad(x(0, len(longestList)-len(x)), mode="edge")).tolist()
-            for y in range(0, len(paddedData)):
-                for z in range(0, y):
-                    average.append(x[y][z])
-                averagedData.append(sum(average)/len(average))
-            allAveragedData.append(averagedData)
-        print(averagedData)
-
-    
-    #makeGraph(controlData, 1, "Control Experiment")
-    #makeGraph(infectRadiusData, 2, "Infection Radius Experiment")
-    #makeGraph(maskData, 3, "Mask Experiment")
+    saveData(controlData, "Control_Data_Experiment.txt")
+    saveData(infectRadiusData, "Infect_Radius_Experiment_Data.txt")
+    saveData(infectChanceData, "Infect_Chance_Experiment_Data.txt")
+    saveData(infectPeriodData, "Infect_Period_Experiment_Data.txt")
+    saveData(maskData, "Mask_Experiment_Data.txt")
 
 experiments()
 
