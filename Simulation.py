@@ -14,7 +14,7 @@ SUSCEPTIBLE=(0,0,1)
 INFECTED=(1,0,0)
 RECOVERED=(.5,.5,.5)
 MOVE_DISTANCE = 1
-testNumber = 2
+testNumber = 100
 
 #Mask Protection
 maskSpreadChance = 0.5
@@ -286,12 +286,11 @@ def experiments():
 
     for x in range(0, testNumber):
         controlData.append(controlExperiment())
-        infectRadiusData.append(infectRadiusExperiment(0, 10))
-        infectChanceData.append(infectChanceExperiment(0, 10))
-        infectPeriodData.append(infectPeriodExperiment(59, 80, 10)) #(59, 240, 10)
-        maskData.append(maskExperiment(0, 4, 2)) #(0, 101, 2)
+        infectRadiusData.append(infectRadiusExperiment(-1, 10))
+        infectChanceData.append(infectChanceExperiment(-1, 10))
+        infectPeriodData.append(infectPeriodExperiment(59, 240, 10)) 
+        maskData.append(maskExperiment(-1, 101, 2)) 
 
-    print(controlData)
 
     controlData = averageData(controlData)
     infectRadiusData= averageData(infectRadiusData)
