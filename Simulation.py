@@ -14,7 +14,7 @@ SUSCEPTIBLE=(0,0,1)
 INFECTED=(1,0,0)
 RECOVERED=(.5,.5,.5)
 MOVE_DISTANCE = 1
-testNumber = 1
+testNumber = 2
 
 #Mask Protection
 maskSpreadChance = 0.5
@@ -148,27 +148,14 @@ def averageData(dataSet):
     finalData = []
 
     for w in allTypes:
-        longestList = []
-        paddedData = []
-
-        #Padding
-        for x in w:
-            if len(x) > len(longestList):
-                longestList = x        
-        for x in w:
-            if x == longestList:
-                paddedData.append(longestList)
-            else:
-                paddedData.append(np.pad(x, (0, len(longestList)-len(x)), mode="edge").tolist())
-
         averagedData = []
 
         #Average
-        for x in range(0, len(paddedData[0])):
+        for x in range(0, len(w[0])):
             average = 0
-            for y in paddedData:
+            for y in w:
                 average += y[x]
-            averagedData.append(average/len(paddedData))
+            averagedData.append(average/len(w))
         finalData.append(averagedData)
     returnableData.append(finalData)
 
@@ -178,15 +165,35 @@ def saveData(data, title):
     with open(title, "w") as file:
         file.write(str(data))
 
+def controlExperiment():
+    #Sets up the variables to collect the averaged data later on
+    dX = []
+    dY = []
+    dZ = []
+    
+    data = simulation()
+    temp1 = data[0]
+    temp1 = sum(temp1)/len(temp1)
+    temp2 = data[1]
+    temp2 = sum(temp2)/len(temp2)
+    temp3 = data[2]
+    temp3 = sum(temp3)/len(temp3)
+    dX.append(temp1)
+    dY.append(temp2)
+    dZ.append(temp3)
+
+    return (dX, dY, dZ)
+    
+
 #Defines the infectRadiusExperiment method that runs multiple simulations with an increasing infection radius and returns the averaged data collected as a tuple
 def infectRadiusExperiment(lMin, lMax):
     #Sets up the variables to collect the averaged data later on
-    infectRadiusX = []
-    infectRadiusY = []
-    infectRadiusZ = []
+    dX = []
+    dY = []
+    dZ = []
  
     for x in range(lMax, lMin, -1):
-        print("Loading progress: " + str(lMax-x+1) + " out of " + str(lMax) + ".")
+        #print("Loading progress: " + str(lMax-x+1) + " out of " + str(lMax) + ".")
         data = simulation(infectionRadius=x)
         temp1 = data[0]
         temp1 = sum(temp1)/len(temp1)
@@ -194,21 +201,21 @@ def infectRadiusExperiment(lMin, lMax):
         temp2 = sum(temp2)/len(temp2)
         temp3 = data[2]
         temp3 = sum(temp3)/len(temp3)
-        infectRadiusX.append(temp1)
-        infectRadiusY.append(temp2)
-        infectRadiusZ.append(temp3)
+        dX.append(temp1)
+        dY.append(temp2)
+        dZ.append(temp3)
 
-    return (infectRadiusX, infectRadiusY, infectRadiusZ)
+    return (dX, dY, dZ)
 
 #Defines the infectChanceExperiment method that runs multiple simulations with an increasing infection chance and returns the averaged data collected as a tuple
 def infectChanceExperiment(lMin, lMax):
     #Sets up the variables to collect the averaged data later on
-    infectRadiusX = []
-    infectRadiusY = []
-    infectRadiusZ = []
+    dX = []
+    dY = []
+    dZ = []
  
     for x in range(lMax, lMin, -1):
-        print("Loading progress: " + str(lMax-x+1) + " out of " + str(lMax) + ".")
+        #print("Loading progress: " + str(lMax-x+1) + " out of " + str(lMax) + ".")
         data = simulation(infectionRate=x)
         temp1 = data[0]
         temp1 = sum(temp1)/len(temp1)
@@ -216,21 +223,21 @@ def infectChanceExperiment(lMin, lMax):
         temp2 = sum(temp2)/len(temp2)
         temp3 = data[2]
         temp3 = sum(temp3)/len(temp3)
-        infectRadiusX.append(temp1)
-        infectRadiusY.append(temp2)
-        infectRadiusZ.append(temp3)
+        dX.append(temp1)
+        dY.append(temp2)
+        dZ.append(temp3)
 
-    return (infectRadiusX, infectRadiusY, infectRadiusZ)
+    return (dX, dY, dZ)
 
 #Defines the infectChanceExperiment method that runs multiple simulations with an increasing infection chance and returns the averaged data collected as a tuple
 def infectPeriodExperiment(lMin, lMax, stepC):
     #Sets up the variables to collect the averaged data later on
-    infectRadiusX = []
-    infectRadiusY = []
-    infectRadiusZ = []
+    dX = []
+    dY = []
+    dZ = []
  
     for x in range(lMax, lMin, -stepC):
-        print("Loading progress: " + str(lMax-x) + " out of " + str(lMax) + ".")
+        #print("Loading progress: " + str(lMax-x) + " out of " + str(lMax) + ".")
         data = simulation(averagePeriod=x)
         temp1 = data[0]
         temp1 = sum(temp1)/len(temp1)
@@ -238,21 +245,21 @@ def infectPeriodExperiment(lMin, lMax, stepC):
         temp2 = sum(temp2)/len(temp2)
         temp3 = data[2]
         temp3 = sum(temp3)/len(temp3)
-        infectRadiusX.append(temp1)
-        infectRadiusY.append(temp2)
-        infectRadiusZ.append(temp3)
+        dX.append(temp1)
+        dY.append(temp2)
+        dZ.append(temp3)
 
-    return (infectRadiusX, infectRadiusY, infectRadiusZ)
+    return (dX, dY, dZ)
 
 #Defines the maskExperiment method that runs multiple simulations with an increasing number of masks being used each simulation and returns the averaged data collected as a tuple
 def maskExperiment(mMin, mMax, stepC):
     #Sets up the variables to collect the averaged data later on
-    infectRadiusX = []
-    infectRadiusY = []
-    infectRadiusZ = []
+    dX = []
+    dY = []
+    dZ = []
  
     for x in range(mMin, mMax, stepC):
-        print("Loading progress: " + str(x) + " out of " + str(mMax-1) + ".")
+        #print("Loading progress: " + str(x) + " out of " + str(mMax-1) + ".")
         data = simulation(m=x)
         temp1 = data[0]
         temp1 = sum(temp1)/len(temp1)
@@ -260,11 +267,11 @@ def maskExperiment(mMin, mMax, stepC):
         temp2 = sum(temp2)/len(temp2)
         temp3 = data[2]
         temp3 = sum(temp3)/len(temp3)
-        infectRadiusX.append(temp1)
-        infectRadiusY.append(temp2)
-        infectRadiusZ.append(temp3)
+        dX.append(temp1)
+        dY.append(temp2)
+        dZ.append(temp3)
 
-    return (infectRadiusX, infectRadiusY, infectRadiusZ)
+    return (dX, dY, dZ)
 
         
 #Defines the method that just runs the experiments created above
@@ -278,11 +285,13 @@ def experiments():
     maskData = []
 
     for x in range(0, testNumber):
-        controlData.append(simulation())
+        controlData.append(controlExperiment())
         infectRadiusData.append(infectRadiusExperiment(0, 10))
         infectChanceData.append(infectChanceExperiment(0, 10))
-        infectPeriodData.append(infectPeriodExperiment(59, 240, 10))
-        maskData.append(maskExperiment(0, 101, 2))
+        infectPeriodData.append(infectPeriodExperiment(59, 80, 10)) #(59, 240, 10)
+        maskData.append(maskExperiment(0, 4, 2)) #(0, 101, 2)
+
+    print(controlData)
 
     controlData = averageData(controlData)
     infectRadiusData= averageData(infectRadiusData)
