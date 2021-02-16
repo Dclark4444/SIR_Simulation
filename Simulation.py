@@ -3,7 +3,6 @@ import turtle
 import math
 import numpy as np
 import time
-import matplotlib.pyplot as plt
 
 screen=turtle.getscreen()
 screen.tracer(0)
@@ -15,7 +14,7 @@ SUSCEPTIBLE=(0,0,1)
 INFECTED=(1,0,0)
 RECOVERED=(.5,.5,.5)
 MOVE_DISTANCE = 1
-testNumber = 100
+testNumber = 1
 
 #Mask Protection
 maskSpreadChance = 0.5
@@ -186,8 +185,8 @@ def infectRadiusExperiment(lMin, lMax):
     infectRadiusY = []
     infectRadiusZ = []
  
-    for x in range(lMin, lMax, 1):
-        print("Loading progress: " + str(x-lMin) + " out of " + str(lMax-1-lMin) + ".")
+    for x in range(lMax, lMin, -1):
+        print("Loading progress: " + str(lMax-x+1) + " out of " + str(lMax) + ".")
         data = simulation(infectionRadius=x)
         temp1 = data[0]
         temp1 = sum(temp1)/len(temp1)
@@ -208,8 +207,8 @@ def infectChanceExperiment(lMin, lMax):
     infectRadiusY = []
     infectRadiusZ = []
  
-    for x in range(lMin, lMax, 1):
-        print("Loading progress: " + str(x-lMin) + " out of " + str(lMax-1-lMin) + ".")
+    for x in range(lMax, lMin, -1):
+        print("Loading progress: " + str(lMax-x+1) + " out of " + str(lMax) + ".")
         data = simulation(infectionRate=x)
         temp1 = data[0]
         temp1 = sum(temp1)/len(temp1)
@@ -230,8 +229,8 @@ def infectPeriodExperiment(lMin, lMax, stepC):
     infectRadiusY = []
     infectRadiusZ = []
  
-    for x in range(lMin, lMax, stepC):
-        print("Loading progress: " + str(x-lMin) + " out of " + str(lMax-1-lMin) + ".")
+    for x in range(lMax, lMin, -stepC):
+        print("Loading progress: " + str(lMax-x) + " out of " + str(lMax) + ".")
         data = simulation(averagePeriod=x)
         temp1 = data[0]
         temp1 = sum(temp1)/len(temp1)
@@ -280,9 +279,9 @@ def experiments():
 
     for x in range(0, testNumber):
         controlData.append(simulation())
-        infectRadiusData.append(infectRadiusExperiment(5, 31))
-        infectChanceData.append(infectChanceExperiment(5, 31))
-        infectPeriodData.append(infectPeriodExperiment(120, 361, 10))
+        infectRadiusData.append(infectRadiusExperiment(0, 10))
+        infectChanceData.append(infectChanceExperiment(0, 10))
+        infectPeriodData.append(infectPeriodExperiment(59, 240, 10))
         maskData.append(maskExperiment(0, 101, 2))
 
     controlData = averageData(controlData)
