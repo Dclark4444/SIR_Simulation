@@ -30,7 +30,7 @@ def getPopulation(n, m):
         status=SUSCEPTIBLE
         if masksLeft > 0:
             maskStatus = True
-            masksLeft =- 1
+            masksLeft -= 1
         else:
             maskStatus = False
             
@@ -98,7 +98,7 @@ def expose(person,population,infectionRadius,infectionRate):
                 maskTemp2 = maskProtectChance
             else:
                 maskTemp2 = 1
-            if d<infectionRadius and d < random.randint(0, infectionRate*maskTemp1*maskTemp2):
+            if d<infectionRadius and d < random.randint(0, infectionRate*maskTemp1*maskTemp2//1):
                 person[2]=INFECTED
                 break
 
@@ -285,23 +285,23 @@ def experiments():
     maskData = []
 
     for x in range(0, testNumber):
-        controlData.append(controlExperiment())
-        infectRadiusData.append(infectRadiusExperiment(-1, 10))
-        infectChanceData.append(infectChanceExperiment(-1, 10))
-        infectPeriodData.append(infectPeriodExperiment(59, 240, 10)) 
-        maskData.append(maskExperiment(-1, 101, 2)) 
+        #controlData.append(controlExperiment())
+        #infectRadiusData.append(infectRadiusExperiment(-1, 10))
+        #infectChanceData.append(infectChanceExperiment(-1, 10))
+        #infectPeriodData.append(infectPeriodExperiment(59, 240, 10)) 
+        maskData.append(maskExperiment(0, 101, 2)) 
 
 
-    controlData = averageData(controlData)
-    infectRadiusData= averageData(infectRadiusData)
-    infectChanceData = averageData(infectChanceData)
-    infectPeriodData = averageData(infectPeriodData)
+    #controlData = averageData(controlData)
+    #infectRadiusData= averageData(infectRadiusData)
+    #infectChanceData = averageData(infectChanceData)
+    #infectPeriodData = averageData(infectPeriodData)
     maskData = averageData(maskData)
 
-    saveData(controlData, "Control_Data_Experiment.txt")
-    saveData(infectRadiusData, "Infect_Radius_Experiment_Data.txt")
-    saveData(infectChanceData, "Infect_Chance_Experiment_Data.txt")
-    saveData(infectPeriodData, "Infect_Period_Experiment_Data.txt")
+    #saveData(controlData, "Control_Data_Experiment.txt")
+    #saveData(infectRadiusData, "Infect_Radius_Experiment_Data.txt")
+    #saveData(infectChanceData, "Infect_Chance_Experiment_Data.txt")
+    #saveData(infectPeriodData, "Infect_Period_Experiment_Data.txt")
     saveData(maskData, "Mask_Experiment_Data.txt")
 
 experiments()
